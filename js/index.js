@@ -75,7 +75,8 @@ function FitbitAuth() {
   this.code = fitbitCredentials.code;
 
   this.login = () => {
-
+    //TODO: store all the data back from the fitbit API, so we can use it to send requests rather than oauthing every time
+    //TODO: Also need to implement token refresh !!!
     headers = {
       'Authorization': "Basic " + window.btoa([fitbitAuth.clientId, fitbitAuth.secret].join(':'))
     }
