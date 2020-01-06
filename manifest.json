@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "Active Chrome Homepage Extension",
+  "description": "This extension pulls in data from strava and fitbit to show cycling activity and weight changes",
+  "version": "1.0",
+  "incognito": "split",
+  "chrome_url_overrides": {"newtab": "index.html"},
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "permissions": [
+    "https://www.strava.com/",
+    "https://api.fitbit.com",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  }
+}
