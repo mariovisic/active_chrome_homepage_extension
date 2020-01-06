@@ -61,7 +61,7 @@ function StravaAPI(accessToken) {
 
   this.getLatestActivityTimestamp = () => {
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ get: 'lastest_activity', accessToken: this.accessToken }, (response) => {
+      chrome.runtime.sendMessage({ get: 'latest_activity', accessToken: this.accessToken }, (response) => {
         resolve(Date.parse(response.start_date) + (response.elapsed_time * 1000))
       })
     })
@@ -90,6 +90,18 @@ function FitbitAuth() {
       headers: headers,
       body: params
     }).then((response) => response.json()).then((data) => fitbitAuth.accessToken = data.access_token)
+  }
+}
+
+function FitbitAPI(accessToken) {
+  this.accessToken = accessToken;
+
+  this.getLastWeight = () => {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ get: 'latest_weight', accessToken: this.accessToken }, (response) => {
+        resolve(response)
+      })
+    })
   }
 }
 
@@ -146,7 +158,10 @@ if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProper
   var fitbitAuth = new FitbitAuth();
 
   fitbitAuth.login().then(() => {
-    console.log(fitbitAuth)
+    api = new FitbitAPI(fitbitAuth.accessToken)
+    api.getLastWeight().then((weight) => {
+      console.log(weight);
+    })
   })
 }
 else {
