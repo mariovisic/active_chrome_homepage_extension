@@ -23,6 +23,7 @@ function timeDiffToString(timestamp) {
   var seconds = Math.floor(delta % 60);
 
   if(days > 0) {
+    //TODO: add plural support (1 day, 2 days)
     output.push(days.toString() + ' days')
   }
 
