@@ -7,6 +7,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return true;
   }
+  //TODO: Weights should be cached for an hour at least
+  //TODO: Maybe we can put the authentication logic here, that way we can add token refresh + retry !
   if (request.get == 'latest_weight') {
     let date = new Date().toISOString().slice(0, 10)
     fetch('https://api.fitbit.com/1/user/-/body/log/weight/date/' + date + '/1d.json', {
