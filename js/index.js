@@ -75,6 +75,7 @@ function FitbitAuth() {
   this.code = fitbitCredentials.code;
 
   this.login = () => {
+
     headers = {
       'Authorization': "Basic " + window.btoa([fitbitAuth.clientId, fitbitAuth.secret].join(':'))
     }
@@ -146,6 +147,8 @@ if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProper
   })
 
   var stravaAuth = new StravaAuth();
+
+  templateLoader.load('home_page', { last_ride_time: '...' })
 
   stravaAuth.login().then(() => {
     api = new StravaAPI(stravaAuth.accessToken)

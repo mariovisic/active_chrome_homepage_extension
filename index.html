@@ -2,6 +2,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/application.css">
   </head>
   <body>
     <div id="app"></div>
@@ -67,10 +68,23 @@
     </script>
 
     <script id="home_page" type="text/x-handlebars-template">
-      <h1>Your last proper bicycle ride was <span id="last_ride_time">{{last_ride_time}}</span> ago</h1>
+      <div class="container">
+        <div class="row my-5">
+          <div class="col-12 text-center"><h1>Your last proper bicycle ride was:</h1></div>
+          <div class="col-12 text-center"><h1><span id="last_ride_time">{{last_ride_time}}</span></h1></div>
+          <div class="col-12 text-center"><h1>ago</h1></div>
+        </div>
+
+      </div>
     </script>
 
-    <a href="#" id="settings">settings</a>
+    <ul class="nav justify-content-end">
+      <li class="nav-item">
+        <a id="settings" class="nav-link active" href="#">Settings</a>
+      </li>
+    </ul>
+
+
 
     <script src='js/lodash.js'></script>
     <script src='js/handlebars.js'></script>
