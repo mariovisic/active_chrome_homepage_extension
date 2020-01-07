@@ -37,37 +37,7 @@ function timeDiffToString(timestamp) {
 }
 
 
-function StravaAuth() {
-  let stravaCredentials = JSON.parse(localStorage.getItem('stravaCredentials'))
-  this.clientId = stravaCredentials.clientId;
-  this.secret = stravaCredentials.secret;
-  this.code = stravaCredentials.code;
 
-  this.login = () => {
-    formData = new FormData();
-    formData.append('client_id', stravaAuth.clientId)
-    formData.append('code', stravaAuth.code)
-    formData.append('client_secret', stravaAuth.secret)
-    formData.append('grant_type', 'authorization_code')
-
-    return fetch('https://www.strava.com/api/v3/oauth/token', {
-      method: 'POST',
-      body: formData
-    }).then((response) => response.json()).then((data) => stravaAuth.accessToken = data.access_token)
-  }
-}
-
-function StravaAPI(accessToken) {
-  this.accessToken = accessToken;
-
-  this.getLatestActivityTimestamp = () => {
-    return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ get: 'latest_activity', accessToken: this.accessToken }, (response) => {
-        resolve(Date.parse(response.start_date) + (response.elapsed_time * 1000))
-      })
-    })
-  }
-}
 
 function FitbitAuth() {
   let fitbitCredentials = JSON.parse(localStorage.getItem('fitbitCredentials'))
@@ -148,16 +118,14 @@ if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProper
     renderSettings();
   })
 
-  var stravaAuth = new StravaAuth();
+  var stravaAPI = new StravaAPI();
 
   templateLoader.load('home_page', { last_ride_time: '...' })
 
-  stravaAuth.login().then(() => {
-    api = new StravaAPI(stravaAuth.accessToken)
-    api.getLatestActivityTimestamp().then((timestamp) => {
-      console.log(timeDiffToString(timestamp));
-      templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
-    })
+  stravaAPI.login()
+  .then(stravaAPI.getLatestActivityTimestamp.bind(stravaAPI))
+  .then((timestamp) => {
+    templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
   })
 
   var fitbitAuth = new FitbitAuth();
