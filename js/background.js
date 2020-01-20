@@ -1,9 +1,10 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.get == 'latest_activity') {
-    fetch('https://www.strava.com/api/v3/athlete/activities', {
-      method: 'GET',
-      headers: { Authorization: "Bearer " + request.accessToken }
-    }).then((response) => response.json()).then((data) => sendResponse(data[0]))
+  if (request == 'getLatestActivityTimestamp') {
+    let api = new StravaAPI();
+
+    api.login()
+      .then(function() { return api.getLatestActivityTimestamp(); })
+      .then(function(result) { sendResponse(result); })
 
     return true;
   }

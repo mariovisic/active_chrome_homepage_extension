@@ -113,30 +113,33 @@ function renderSettings() {
   })
 }
 
-if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProperty("fitbitCredentials")) {
-  document.querySelector('#settings').addEventListener('click', () => {
-    renderSettings();
-  })
-
-  var stravaAPI = new StravaAPI();
-
-  templateLoader.load('home_page', { last_ride_time: '...' })
-
-  stravaAPI.login()
-  .then(stravaAPI.getLatestActivityTimestamp.bind(stravaAPI))
-  .then((timestamp) => {
-    templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
-  })
-
-  var fitbitAuth = new FitbitAuth();
-
-  fitbitAuth.login().then(() => {
-    api = new FitbitAPI(fitbitAuth.accessToken)
-    api.getLastWeight().then((weight) => {
-      console.log(weight);
+async function main() {
+  if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProperty("fitbitCredentials")) {
+    document.querySelector('#settings').addEventListener('click', () => {
+      renderSettings();
     })
-  })
+
+    templateLoader.load('home_page', { last_ride_time: '...' })
+
+    chrome.runtime.sendMessage('getLatestActivityTimestamp', function(timestamp) {
+      setInterval(function() {
+        templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
+      }, 1000);
+    })
+
+
+    //var fitbitAuth = new FitbitAuth();
+
+    //fitbitAuth.login().then(() => {
+      //api = new FitbitAPI(fitbitAuth.accessToken)
+      //api.getLastWeight().then((weight) => {
+        //console.log(weight);
+      //})
+    //})
+  }
+  else {
+    renderSettings();
+  }
 }
-else {
-  renderSettings();
-}
+
+main();
