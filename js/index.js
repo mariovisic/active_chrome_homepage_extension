@@ -122,6 +122,8 @@ async function main() {
     templateLoader.load('home_page', { last_ride_time: '...' })
 
     chrome.runtime.sendMessage('getLatestActivityTimestamp', function(timestamp) {
+      templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
+
       setInterval(function() {
         templateLoader.load('home_page', { last_ride_time: timeDiffToString(timestamp) })
       }, 1000);
