@@ -60,11 +60,19 @@ class StravaAPI {
   }
 
   async getLatestActivityTimestamp() {
-    let response = await (await (fetch('https://www.strava.com/api/v3/athlete/activities', {
-      method: 'GET',
-      headers: { Authorization: "Bearer " + this.accessToken }
-    }))).json()
+    let cachedResponse = CachedLocalStorage.get('stravaLatestActivityTimestamp');
+    if(cachedResponse != undefined) {
+      return cachedResponse;
+    } else {
+      let response = await (await (fetch('https://www.strava.com/api/v3/athlete/activities', {
+        method: 'GET',
+        headers: { Authorization: "Bearer " + this.accessToken }
+      }))).json()
 
-    return Date.parse(response[0].start_date) + (response[0].elapsed_time * 1000)
+      let value = Date.parse(response[0].start_date) + (response[0].elapsed_time * 1000);
+      CachedLocalStorage.set('stravaLatestActivityTimestamp', value);
+
+      return value;
+    }
   }
 }
