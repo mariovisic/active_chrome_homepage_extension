@@ -39,7 +39,7 @@ class StravaAPI {
   }
 
   async loadTokens() {
-    if(this.tokens.expires_at - (_.now() / 1000) < (10 * 60)) {
+    if(this.tokens.expires_at - (_.now() / 1000) < (30 * 60)) {
       let newTokens = await (await this.getRefreshedTokens()).json();
       this.setTokens(_.pick(newTokens, ['expires_at', 'access_token', 'refresh_token']));
     }

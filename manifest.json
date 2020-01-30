@@ -12,7 +12,8 @@
     "storage"
   ],
   "background": {
-    "scripts": ["js/lodash.js", "js/cached_local_storage.js", "js/strava.js", "js/background.js"],
+    "scripts": ["js/lodash.js", "js/cached_local_storage.js", "js/fitbit.js",
+      "js/strava.js", "js/background.js"],
     "persistent": false
   }
 }

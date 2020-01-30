@@ -36,48 +36,6 @@ function timeDiffToString(timestamp) {
   return output.join(", ")
 }
 
-
-
-
-function FitbitAuth() {
-  let fitbitCredentials = JSON.parse(localStorage.getItem('fitbitCredentials'))
-  this.clientId = fitbitCredentials.clientId;
-  this.secret = fitbitCredentials.secret;
-  this.code = fitbitCredentials.code;
-
-  this.login = () => {
-    //TODO: store all the data back from the fitbit API, so we can use it to send requests rather than oauthing every time
-    //TODO: Also need to implement token refresh !!!
-    headers = {
-      'Authorization': "Basic " + window.btoa([fitbitAuth.clientId, fitbitAuth.secret].join(':'))
-    }
-
-    params = new URLSearchParams();
-    params.append('clientId', fitbitAuth.clientId)
-    params.append('code', fitbitAuth.code)
-    params.append('grant_type', 'authorization_code')
-    params.append('redirect_uri', 'http://localhost/')
-
-    return fetch('https://api.fitbit.com/oauth2/token', {
-      method: 'POST',
-      headers: headers,
-      body: params
-    }).then((response) => response.json()).then((data) => fitbitAuth.accessToken = data.access_token)
-  }
-}
-
-function FitbitAPI(accessToken) {
-  this.accessToken = accessToken;
-
-  this.getLastWeight = () => {
-    return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ get: 'latest_weight', accessToken: this.accessToken }, (response) => {
-        resolve(response)
-      })
-    })
-  }
-}
-
 function renderSettings() {
   var data = { }
 
@@ -129,15 +87,9 @@ async function main() {
       }, 1000);
     })
 
-
-    //var fitbitAuth = new FitbitAuth();
-
-    //fitbitAuth.login().then(() => {
-      //api = new FitbitAPI(fitbitAuth.accessToken)
-      //api.getLastWeight().then((weight) => {
-        //console.log(weight);
-      //})
-    //})
+    chrome.runtime.sendMessage('getLastMonthOfWeights', function(result) {
+      console.log('result', result);
+    });
   }
   else {
     renderSettings();
