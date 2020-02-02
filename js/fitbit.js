@@ -13,7 +13,7 @@ class FitbitAPI {
   async login() {
     if(!localStorage.hasOwnProperty("fitbitTokens")) {
       let tokens = await (await this.getTokens()).json();
-      this.setTokens(_.pick(tokens, ['expires_at', 'access_token', 'refresh_token']));
+      this.setTokens(_.pick(tokens, ['expires_in', 'access_token', 'refresh_token']));
     }
 
     await this.loadTokens()
@@ -39,14 +39,18 @@ class FitbitAPI {
 
   setTokens(tokens) {
     if(!_.isEmpty(tokens)) {
-      localStorage.setItem('fitbitTokens', JSON.stringify(tokens))
+      localStorage.setItem('fitbitTokens', JSON.stringify({
+        expires_at: (_.now() / 1000) + tokens.expires_in,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      }))
     }
   }
 
   async loadTokens() {
     if(this.tokens.expires_at - (_.now() / 1000) < (30 * 60)) {
       let newTokens = await (await this.getRefreshedTokens()).json();
-      this.setTokens(_.pick(newTokens, ['expires_at', 'access_token', 'refresh_token']));
+      this.setTokens(_.pick(newTokens, ['expires_in', 'access_token', 'refresh_token']));
     }
     this.accessToken = this.tokens.access_token;
   }

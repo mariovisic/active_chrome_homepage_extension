@@ -72,11 +72,13 @@ function renderSettings() {
 }
 
 async function main() {
+  // TODO: Move this into its own class (maybe main page or something?
   if(localStorage.hasOwnProperty("stravaCredentials") && localStorage.hasOwnProperty("fitbitCredentials")) {
     document.querySelector('#settings').addEventListener('click', () => {
       renderSettings();
     })
 
+  // TODO: Move this into its own class (maybe strava lastest workout widget?)
     templateLoader.load('home_page', { last_ride_time: '...' })
 
     chrome.runtime.sendMessage('getLatestActivityTimestamp', function(timestamp) {
@@ -87,8 +89,49 @@ async function main() {
       }, 1000);
     })
 
+    // TODO: Move this into its own class (maybe fitbit weight widget?)
     chrome.runtime.sendMessage('getLastMonthOfWeights', function(result) {
-      console.log('result', result);
+      let data = _.uniqBy(result, _.iteratee('date')).map((log) => ({ x: log.date, y: log.weight}))
+
+      // Get mean of first 7 and last 7 data points
+      let trendStart = _.meanBy(data.slice(0, 6), (dataPoint) => dataPoint.y);
+      let trendFinish = _.meanBy(data.slice(-7), (dataPoint) => dataPoint.y);
+
+      let trendData = _.map(data, function(dataPoint, index) {
+        return {
+          x: dataPoint.x,
+          y: _.round(trendStart + ((index/(data.length-1)) * (trendFinish - trendStart)), 2)
+        }
+      })
+
+      let trendColor = trendFinish < (trendStart + 0.5) ? '#26E7A6' : '#ff0000'
+
+      var options = {
+        colors: ['#008FFB', trendColor],
+        fill: { type: ['gradient', 'solid'] },
+        stroke: { dashArray: [0, 8] },
+        series: [{
+          name: "Weight",
+          type: 'line',
+          data: data,
+        }, {
+          name: "Weight Trend",
+          type: 'line',
+          data: trendData,
+        }],
+        chart: {
+          animations: { enabled: false },
+          sparkline: { enabled: true },
+          type: 'line',
+          height: 250,
+        },
+        tooltip: {
+          enabledOnSeries: [0],
+        }
+      }
+
+      var chart = new ApexCharts(document.querySelector('.weight_chart'), options);
+      chart.render();
     });
   }
   else {
