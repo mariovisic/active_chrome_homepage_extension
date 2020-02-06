@@ -68,7 +68,7 @@
     </script>
 
     <script id="home_page" type="text/x-handlebars-template">
-      <div class="container">
+      <div id="home_page_inner" class="container">
         <div class="row my-5">
           <div class="col-12 text-center"><h1>Your last proper bicycle ride was:</h1></div>
           <div class="col-12 text-center"><h1><span id="last_ride_time">{{last_ride_time}}</span></h1></div>
@@ -88,8 +88,6 @@
         <a id="settings" class="nav-link active" href="#">Settings</a>
       </li>
     </ul>
-
-
 
     <script src='js/lodash.js'></script>
     <script src='js/handlebars.js'></script>
