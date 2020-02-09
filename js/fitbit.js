@@ -76,7 +76,7 @@ class FitbitAPI {
     if(cachedResponse != undefined) {
       return cachedResponse;
     } else {
-      let date = new Date().toISOString().slice(0, 10);
+      let date = new Date().toLocaleString( 'sv', { timeZoneName: 'short', dateStyle: 'short' } );
 
       let response = await (await (fetch('https://api.fitbit.com/1/user/-/body/log/weight/date/' + date + '/1m.json', {
         method: 'GET',
