@@ -125,7 +125,7 @@ async function main() {
           animations: { enabled: false },
           sparkline: { enabled: true },
           type: 'line',
-          height: 250,
+          height: 200,
         },
         tooltip: {
           enabledOnSeries: [0],
@@ -135,10 +135,47 @@ async function main() {
       var chart = new ApexCharts(document.querySelector('.weight_chart'), options);
       chart.render();
     });
+
+    chrome.runtime.sendMessage('getYearsActivityPolylines', function(polylines) {
+      let map = L.map('map').setView([51.505, -0.09], 14);
+
+      let bounds = L.Polyline.fromEncoded(polylines[0]).getBounds();
+      console.log(bounds);
+
+      let defaultToDarkFilter = [
+          'grayscale:80%',
+          'invert:100%',
+          'saturate:75%',
+          'contrast:105%',
+          'hue:315deg',
+      ]
+
+      L.tileLayer.colorFilter('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+          attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
+          filter: defaultToDarkFilter
+      }).addTo(map);
+
+      for (let encoded of polylines) {
+
+        var coordinates = L.Polyline.fromEncoded(encoded).getLatLngs();
+        bounds.extend(L.Polyline.fromEncoded(encoded).getBounds());
+
+        L.polyline(
+          coordinates,
+          {
+            color: '#fff',
+            weight: 2,
+            opacity: .8,
+            lineJoin: 'round'
+          }
+        ).addTo(map);
+      }
+
+      map.fitBounds(bounds.pad(0.05));
+    })
+
   }
-  else {
-    renderSettings();
-  }
+  else { renderSettings(); }
 }
 
 main();

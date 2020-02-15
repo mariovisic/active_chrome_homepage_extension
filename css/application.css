@@ -2,7 +2,13 @@
   color: #ccc;
 }
 
+#home_page_inner {
+  color: #ffffff;
+  text-shadow: #333 1px 1px;
+}
+
 .weight_chart {
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid #d6e7ff;
   padding: 20px;
 }

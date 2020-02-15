@@ -9,6 +9,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request == 'getYearsActivityPolylines') {
+    let api = new StravaAPI();
+
+    api.login()
+      .then(function() { return api.getYearsActivityPolylines(); })
+      .then(function(result) { sendResponse(result); })
+
+    return true;
+  }
+
   if (request == 'getLastMonthOfWeights') {
     let api = new FitbitAPI();
 

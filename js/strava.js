@@ -75,4 +75,25 @@ class StravaAPI {
       return value;
     }
   }
+
+  async getYearsActivityPolylines() {
+    let cachedResponse = CachedLocalStorage.get('stravaYearsActivityPolylines');
+    if(cachedResponse != undefined) {
+      return cachedResponse;
+    } else {
+      let startOfYearEpochTimestamp = Date.parse(new Date().getFullYear()) / 1000;
+
+      // FIXME: Currently won't get older activities if a rider has more than 200 activities for the year
+      let response = await (await (fetch('https://www.strava.com/api/v3/athlete/activities?per_page=200&after=' + startOfYearEpochTimestamp, {
+        method: 'GET',
+        headers: { Authorization: "Bearer " + this.accessToken }
+      }))).json()
+
+      let value =_.compact(_.map(response, (ride) =>ride.map.summary_polyline));
+
+      CachedLocalStorage.set('stravaYearsActivityPolylines', value);
+
+      return value;
+    }
+  }
 }
