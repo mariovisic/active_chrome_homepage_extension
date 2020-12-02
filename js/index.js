@@ -163,7 +163,7 @@ async function main() {
         L.polyline(
           coordinates,
           {
-            color: '#fff',
+            color: '#88e86d',
             weight: 2,
             opacity: .8,
             lineJoin: 'round'
