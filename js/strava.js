@@ -89,7 +89,8 @@ class StravaAPI {
         headers: { Authorization: "Bearer " + this.accessToken }
       }))).json()
 
-      let value =_.compact(_.map(response, (ride) =>ride.map.summary_polyline));
+      let selectedRides = _.filter(response, function(ride) { return ride.trainer == false && ride.type == 'Ride' })
+      let value =_.compact(_.map(selectedRides, (ride) =>ride.map.summary_polyline));
 
       CachedLocalStorage.set('stravaYearsActivityPolylines', value);
 
